@@ -1,0 +1,47 @@
+@font-face {
+    font-family: Bold Pixel;
+    src: url(ARCADECLASSIC.ttf);
+}
+#titleBar{
+	vertical-align: center;
+}
+#title{
+	color: white;
+	text-decoration: none;
+	font-size: 40px;
+	font-family: "Bold Pixel";
+	text-align: left;
+}
+a{
+	text-decoration: none;
+	color: white;
+}
+a:hover{
+	color: #DDDDDD;
+}
+#navbar{
+	height: 50px;
+	width: 101%;
+	background-color: #4A0A0A; 
+	margin-top: -40px;
+	margin-left: -10px;
+	margin-right: -50px;
+}
+#game{
+	display: table;
+  	margin: 0 auto;
+}
+#description{
+	height: 100px;
+	text-align: center;
+	font-family: "Bold Pixel";
+	font-size: 36px;
+	color: white;
+}
+body{
+	background-color: #1F1F1F;
+}
+head{
+	background-color: black;
+	height: 50px;
+}

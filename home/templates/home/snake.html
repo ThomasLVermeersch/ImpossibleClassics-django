@@ -1,0 +1,144 @@
+<!DOCTYPE>
+<html>
+		{% load staticfiles %}
+		<link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}"/>
+		<link rel="stylesheet" type="text/css" href="{% static 'home/pong.css' %}"/>	
+	<head>
+	<div id="navbar">
+		<div id="titleBar">
+			<p id="title"><a href="/">Impossible Classics</a></p>
+		</div>
+	</div>
+		<link rel="stylesheet" href="pong.css">
+	</head>
+
+	<body>
+		<div id=description>
+			<span>COMING SOON</span>
+		</div>
+		<div id="game">
+			<canvas id="snakeCanvas" width="620" height="620"></canvas>
+		</div>
+	</body>
+<script>
+var fruitX;
+var fruitY;
+var xPos = 360;
+var yPos = 360;
+var xSpeed = 1;
+var ySpeed = 0;
+var start = true;
+var paused = false;
+var gameOver = false;
+var fruit = false;
+var snakeEdge;
+window.onload = function(){
+	canvas = document.getElementById('snakeCanvas');
+	canvasContext = canvas.getContext('2d');
+	setInterval(update, 1000/100);
+	window.addEventListener('keydown',
+		function(e){	
+			if(e.keyCode == 37){
+				xSpeed = -1;
+				ySpeed = 0;
+			}
+			else if(e.keyCode == 38){
+				ySpeed = -1;
+				xSpeed = 0;
+			}
+			else if(e.keyCode == 39){
+				xSpeed = 1;
+				ySpeed = 0;
+			}
+			else if(e.keyCode == 40){
+				ySpeed = 1;
+				xSpeed = 0;
+			}
+		});
+	window.addEventListener('click',
+	 function(e){
+	 	if(start){
+	 		start = false;
+	 	} else if(paused == false){
+	 		paused = true;
+	 	} else {
+	 		paused = false;
+	 	}
+	 });
+}
+function canvasSettings(){
+	canvasContext.fillStyle = 'black';
+	canvasContext.fillRect(0,0,canvas.width,canvas.height);
+}
+function snake(){
+	canvasContext.fillStyle = 'white';
+	snakeEdge = canvas.width/77;
+	canvasContext.fillRect(xPos,yPos, snakeEdge,snakeEdge);
+	xPos = xPos + xSpeed;
+	yPos = yPos + ySpeed;
+}
+function hitBorder(){
+	if(xPos > canvas.width){
+		gameOver = true;
+	} else if(xPos < 0){
+		gameOver = true;
+	} else if(yPos < 0){
+		gameOver = true;
+	} else if(yPos > canvas.height){
+		gameOver = true;
+	}
+}
+function startSettings(){
+	canvasSettings();
+	canvasContext.fillStyle = 'white'
+	canvasContext.font = "40px Bold Pixel";
+	canvasContext.fillText("Click to Start", canvas.width / 2 - 135, canvas.height / 2 - 50);
+}
+function pauseSettings(){
+	canvasSettings();
+	canvasContext.fillStyle = 'white'
+	canvasContext.font = "40px Bold Pixel";
+	canvasContext.fillText("Paused", canvas.width / 2 - 70, canvas.height / 2 - 50);
+}
+function gameOverSettings(){
+	canvasSettings();
+	canvasContext.fillStyle = 'white'
+	canvasContext.font = "40px Bold Pixel";
+	canvasContext.fillText("Game Over", canvas.width / 2 - 95, canvas.height / 2 - 50);
+}
+function spawnFruit(){
+	if(fruit == false){
+		fruitX = (Math.random() * canvas.width - 10) + 5;
+		fruitY = (Math.random() * canvas.height - 10) + 5;
+		canvasContext.fillStyle = 'red';
+		canvasContext.fillRect(fruitX,fruitY, canvas.width/155,canvas.height/155);
+		fruit = true;
+	}
+	canvasContext.fillStyle = 'red';
+	canvasContext.fillRect(fruitX,fruitY, canvas.width/155,canvas.height/155);
+}
+function eatFruit(){
+	if(xPos + (snakeEdge) > fruitX && xPos < fruitX ){
+		if(yPos + (snakeEdge) > fruitY && yPos < fruitY){
+			fruit = false;
+		}
+	}
+}
+function update(){
+	if(start){
+		startSettings();
+	} else if(paused){
+		pauseSettings();
+	} else if(gameOver) {
+		gameOverSettings();
+	} else {
+		canvasSettings();
+		snake();
+		hitBorder();
+		spawnFruit();
+		eatFruit();
+	}
+	
+}
+</script>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE>
+<html>
+	{% load staticfiles %}
+		<link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}"/>	
+		<link rel="stylesheet" type="text/css" href="{% static 'home/breakout.css' %}"/>
+	
+	<head>
+	<div id="navbar">
+		<div id="titleBar">
+			<p id="title"><a href="/">Impossible Classics</a></p>
+		</div>
+	</div>
+		<link rel="stylesheet" href="pong.css">
+	</head>
+
+	<body>
+		<div id="description">
+			<span>Breakout on crack</span>
+		</div>
+		<div id="game">
+			<canvas id="breakoutCanvas" width="960" height="620"></canvas>
+		</div>
+
+
+<script>
+var score = 0;
+var pause = false;
+var start = true;
+var playerPosition = 480;
+var playerHeight = 10;
+var playerWidth = 100;
+var ballX = 480;
+var ballY = 600;
+var ballYVelocity = -20;
+var ballXVelocity = 5;
+var brickArray = [
+	[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+	[1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+];
+var gameOver = false;
+brickCount = 7 * 14;
+window.onload = function(){
+	canvas = document.getElementById('breakoutCanvas');
+	canvasContext = canvas.getContext('2d');
+	setInterval(update, 1000/60);
+	canvas.addEventListener('mousemove',
+		function(event){
+			var rect = canvas.getBoundingClientRect();
+			playerPosition = event.clientX - rect.left - playerWidth/2;
+		});
+	canvas.addEventListener('click',
+		function(event){
+			if(start == true){
+				start = false;
+			}
+			else if (gameOver == true){
+				gameReset();
+			}
+			else if(pause == false){
+				pause = true;
+			}
+			else if (pause == true){
+				pause = false;
+			}
+	});
+}
+function gameReset(){
+	brickArray = [
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+	];
+	gameOver = false;
+	score = 0;
+	pause = false;
+	start = true;
+	playerPosition = 480;
+	playerHeight = 10;
+	playerWidth = 100;
+	ballX = 480;
+	ballY = 600;
+	ballYVelocity = -20;
+	ballXVelocity = 5;
+	brickCount = 7 * 14;
+}
+function levelUp(){
+	brickArray = [
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+		[1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+	];
+	ballX = 480;
+	ballY = 600;
+	ballYVelocity = -25;
+	ballXVelocity = 5;
+	brickCount = 7 * 14;
+}
+function canvasSettings(){
+	canvasContext.fillStyle = 'black';
+	canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+}
+function scoreSettings(){
+	canvasContext.fillStyle = 'white'
+	canvasContext.font = "40px Bold Pixel";
+	canvasContext.fillText(score, canvas.width / 2 - 20, canvas.height / 2);
+}
+function playerAndBallSettings(){
+	canvasContext.fillStyle = 'white';
+	canvasContext.fillRect(playerPosition, canvas.height - playerHeight, playerWidth, canvas.height);
+	canvasContext.fillRect(ballX, ballY, 10, 10);
+	scoreSettings();
+}
+function bricks(){
+	for(i = 0; i < 7; i++){
+		for(j = 0; j < 14; j++){
+			if(brickArray[i][j] == 1){
+				canvasContext.fillStyle = 'white';
+				canvasContext.fillRect((j*canvas.width/14),i*20, canvas.width/14 - 1, 18);
+			}
+		}
+	}
+}
+function wallDetection(){
+	if(ballX > canvas.width - 10){
+		ballXVelocity = -ballXVelocity;
+	}
+	if(ballX < 0){
+		ballXVelocity = -ballXVelocity;
+	}
+	if(ballY < 0){
+		ballYVelocity = -ballYVelocity;
+	}
+	if(ballY > canvas.height){
+		gameOver = true;
+	}
+}
+function paddleDetection(){
+	if(ballY > canvas.height - 25){
+		if(ballX > playerPosition && ballX < playerPosition + playerWidth){
+			ballYVelocity = -ballYVelocity;
+			dx = ballX - (playerPosition + playerWidth / 2);
+				ballXVelocity = dx * 0.3;
+		}
+	}
+}
+function gameOverSettings(){
+	canvasContext.fillStyle = 'white'
+	canvasContext.font = "40px Bold Pixel";
+	canvasContext.fillText("Game Over", canvas.width / 2 - 95, canvas.height / 2 - 50);
+}
+function startSettings(){
+	canvasContext.fillStyle = 'white'
+	canvasContext.font = "40px Bold Pixel";
+	canvasContext.fillText("Click to Start", canvas.width / 2 - 135, canvas.height / 2 - 50);
+}
+function pauseSettings(){
+	canvasContext.fillStyle = 'white'
+	canvasContext.font = "40px Bold Pixel";
+	canvasContext.fillText("Paused", canvas.width / 2 - 70, canvas.height / 2 - 50);
+}
+function brickBreaking(){
+	if(ballY < 140){
+		for(i = 0; i < 7; i++){
+			if(ballY - 10 < i* 20){
+				for(j = 0; j < 14; j++){
+					if(ballX > j*canvas.width/14 && ballX < j*canvas.width/14 + canvas.width/14){
+						if(brickArray[i][j] == 1){
+							brickArray[i][j] = 0;
+							score++;
+							brickCount--;
+							ballXVelocity = -ballXVelocity;
+							ballYVelocity = -ballYVelocity;
+						}
+					}
+				}
+			}
+		}
+	}
+	if(brickCount <= 0){
+		levelUp();
+	}
+}
+function update(){
+	if(start == true){
+		canvasSettings();
+		startSettings();
+	}
+	else if(pause == true){
+		canvasSettings();
+		pauseSettings();
+	}
+	else if(gameOver == false){
+		canvasSettings();
+		playerAndBallSettings();
+		bricks();
+		ballX += ballXVelocity;
+		ballY += ballYVelocity;
+		wallDetection();
+		paddleDetection();
+		brickBreaking();
+	} else {
+		canvasSettings();
+		gameOverSettings();
+		scoreSettings();
+	}
+}
+</script>
+
+
+
+
+</html>

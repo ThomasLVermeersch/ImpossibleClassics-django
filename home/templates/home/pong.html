@@ -1,0 +1,166 @@
+<!DOCTYPE>
+<html>
+	{% load staticfiles %}
+		<link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}"/>
+		<link rel="stylesheet" type="text/css" href="{% static 'home/pong.css' %}"/>		
+
+<head>
+	<div id="navbar">
+		<div id="titleBar">
+			<p id="title"><a href="/">Impossible Classics</a></p>
+		</div>
+	</div>
+<link rel="stylesheet" href="pong.css">
+</head>
+
+<body>
+<div id="description"><span>SEE HOW MANY POINTS YOU CAN SCORE BEFORE THE OVERPOWERED COMPUTER GETS 5</span></div>
+<div id="game">
+	<canvas id="pongCanvas" width="960" height="620"></canvas>
+</div>
+</body>
+
+
+
+
+<script>
+playerPosition = computerPosition = 260;
+paddleWidth = 10;
+paddleHeight = 100;
+ballDiameter = 10;
+ballPositionX = 480;
+ballPositionY = 305;
+xVelocity = yVelocity = 15;
+playerScore = computerScore = 0;
+computerSpeed = 10;
+paused = false;
+tempXVelocity = 0;
+tempYVelocity = 0;
+tempComputerPosition = 0;
+tempPlayerPosition = 0;
+pauseText = "Paused";
+start = true;
+startText = "Start";
+gameOverText = "Game Over";
+restartText = "Click to Restart";
+gameOver = false;
+window.onload = function(){
+	canvas = document.getElementById('pongCanvas');
+	canvasContext = canvas.getContext('2d');
+	setInterval(update, 1000/100);
+	canvas.addEventListener('mousemove',
+		function(event){
+				if(paused == false){
+					playerPosition = event.clientY - 150 - paddleHeight / 2;
+				}
+		});
+	canvas.addEventListener('click',
+		function(event){
+			if(start == true && paused == false){
+				start = false;
+			}
+			else if(paused == true && gameOver != true){
+				paused = false;
+				start = false;
+			} 
+			else if(gameOver == true) {
+				paused = false;
+				playerScore = 0;
+				computerScore = playerScore;
+				gameOver = false;
+				restart();
+			}
+			else{
+				paused = true;
+			}
+	});
+}
+function restart(){
+	ballPositionX = canvas.width / 2;
+	ballPositionY = canvas.height / 2;
+	xVelocity = -xVelocity;
+	yVelocity = 10;
+}
+function canvasSettings(){
+	canvasContext.fillStyle = 'black';
+	canvasContext.fillRect(0, 0, canvas.width, canvas.height);
+	canvasContext.fillStyle = 'white';
+	canvasContext.fillRect(0, playerPosition, paddleWidth, paddleHeight);
+	canvasContext.fillRect(canvas.width - paddleWidth, computerPosition, paddleWidth, paddleHeight);
+	canvasContext.fillRect(ballPositionX - (ballDiameter / 2), ballPositionY - (ballDiameter / 2), ballDiameter, ballDiameter);
+	canvasContext.font = "10px Bold Pixel";
+	canvasContext.fillText(playerScore, 10, 10);
+	canvasContext.fillText(computerScore, canvas.width - 10, 10);
+}
+function pauseScreen(){
+	canvasContext.font = "40px Bold Pixel";
+	canvasContext.fillText(pauseText, canvas.width / 2 - 75, canvas.height / 2 - 50);
+}
+function startScreen(){
+	canvasContext.font = "40px Bold Pixel";
+	canvasContext.fillText(startText, canvas.width / 2 - 65, canvas.height / 2 - 50);
+}
+function gameOverScreen(){
+	canvasContext.font = "40px Bold Pixel";
+	canvasContext.fillText(gameOverText, canvas.width / 2 - 105, canvas.height / 2 - 50);
+	canvasContext.fillText(playerScore, canvas.width / 2 - 45, canvas.height / 2);
+	canvasContext.fillText(computerScore, canvas.width / 2 + 25, canvas.height / 2);
+	canvasContext.font = "20px Bold Pixel";
+	canvasContext.fillText(restartText, canvas.width / 2 - 95, (canvas.height / 2) + 50);
+	ballPositionY = -50;
+	ballPositionX = ballPositionY;
+}
+function update(){
+	canvasSettings();
+	if(computerScore >= 5){
+		gameOver = true;
+		paused = true;
+	}
+	if(paused == true && gameOver == true){
+		gameOverScreen();
+	}
+	else if(paused == true){
+		pauseScreen();
+	}
+	else if(paused == false && start == true){
+		startScreen();
+		gameOver = false;
+	}
+	else if(paused == false){
+		ballPositionX += xVelocity;
+		ballPositionY += yVelocity;
+		if(ballPositionY < 0 && yVelocity < 0){
+			yVelocity = -yVelocity;
+		} else if(ballPositionY > canvas.height && yVelocity > 0){
+			yVelocity = -yVelocity;
+		}
+		if(ballPositionX < 10) {
+			if(ballPositionY > playerPosition && ballPositionY < playerPosition + paddleHeight){
+				xVelocity = -xVelocity;
+				dy = ballPositionY - (playerPosition + paddleHeight / 2);
+				yVelocity = dy * 0.3;
+			} else {
+				computerScore++;
+				restart();
+			}
+		}
+		if(ballPositionX > canvas.width) {
+			if(ballPositionY > computerPosition && ballPositionY < computerPosition + paddleHeight){
+				xVelocity = -xVelocity;
+				dy = ballPositionY -(computerPosition + paddleHeight / 2);
+				yVelocity = dy * 0.3;
+			} else {
+				playerScore++;
+				restart();
+			}
+		}
+		if(ballPositionY > computerPosition + paddleHeight / 2){
+			computerPosition += computerSpeed;
+		}
+		if(ballPositionY < computerPosition + paddleHeight / 2){
+			computerPosition -= computerSpeed;
+		}
+	}
+}
+</script>
+</html>
