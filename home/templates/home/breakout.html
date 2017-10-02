@@ -2,7 +2,7 @@
 <html>
 	{% load staticfiles %}
 		<link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}"/>	
-		<link rel="stylesheet" type="text/css" href="{% static 'home/breakout.css' %}"/>
+		<link rel="stylesheet" type="text/css" href="{% static 'home/pong.css' %}"/>
 	
 	<head>
 	<div id="navbar">
@@ -33,18 +33,11 @@ var ballX = 480;
 var ballY = 600;
 var ballYVelocity = -20;
 var ballXVelocity = 5;
-var brickArray = [
-	[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-	[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-	[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-	[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-	[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-	[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-	[1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-];
+var brickArray = [];
 var gameOver = false;
 brickCount = 7 * 14;
 window.onload = function(){
+	resetBricks();
 	canvas = document.getElementById('breakoutCanvas');
 	canvasContext = canvas.getContext('2d');
 	setInterval(update, 1000/60);
@@ -69,7 +62,7 @@ window.onload = function(){
 			}
 	});
 }
-function gameReset(){
+function resetBricks(){
 	brickArray = [
 		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
 		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -79,6 +72,9 @@ function gameReset(){
 		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
 		[1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 	];
+}
+function gameReset(){
+	resetBricks();
 	gameOver = false;
 	score = 0;
 	pause = false;
@@ -93,15 +89,7 @@ function gameReset(){
 	brickCount = 7 * 14;
 }
 function levelUp(){
-	brickArray = [
-		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-		[1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-		[1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-	];
+	resetBricks();
 	ballX = 480;
 	ballY = 600;
 	ballYVelocity = -25;
@@ -165,6 +153,7 @@ function startSettings(){
 	canvasContext.fillStyle = 'white'
 	canvasContext.font = "40px Bold Pixel";
 	canvasContext.fillText("Click to Start", canvas.width / 2 - 135, canvas.height / 2 - 50);
+	resetBricks();
 }
 function pauseSettings(){
 	canvasContext.fillStyle = 'white'
